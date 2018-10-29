@@ -1,0 +1,73 @@
+import jdcal
+from openpyxl import load_workbook
+import xlwt
+
+
+def read_book(address, sheet_name):
+    wb = load_workbook(address)
+
+    flag1 = False
+    flag2 = False
+    i = 1
+    j = 1
+    a = []
+    cur = wb.get_sheet_by_name(sheet_name)
+    while (not flag1):
+        b = []
+        flag2 = False
+        while ((not flag2)):
+            if (cur.cell(i, j).value != None):
+                b += [cur.cell(i, j).value]
+            else:
+                flag2 = True
+            j += 1
+
+        a += [b]
+        i += 1
+        if (cur.cell(i, 1).value == None):
+            flag1 = True
+        j = 1
+    return a
+
+
+def write_book(arr, address, sheet_name):
+    book = xlwt.Workbook(encoding="utf-8")
+    sheet1 = book.add_sheet(sheet_name)
+    for i in range(0, len(arr)):
+        for j in range(0, len(arr[i])):
+            sheet1.write(i, j, arr[i][j])
+    book.save(address)
+
+
+
+def main():
+    #address of input values
+    address1 = "C://Users/fomiu/Desktop/test_exel/test_input.xlsx"
+    arr = read_book(address1, 'Sheet2')
+    for i in range(0, len(arr)):
+        for j in range(0, len(arr[i])):
+            print(arr[i][j], end = "  ")
+        print("\n", end = "")
+
+    #address of output values
+    address2 = "C://Users/fomiu/Desktop/test_exel/test_output1.xls"
+    write_book(arr, address2, "Sheet1")
+
+
+
+    #address of input values
+    address1 = "C://Users/fomiu/Desktop/учёба/data_for_project/marketdata_sample.xlsx"
+    arr = read_book(address1, "marketdata_sample")
+    new_arr = []
+    for i in range(0, len(arr)):
+        new_arr += [arr[i][0].split(",")]
+        for j in range(0, len(new_arr[i])):
+            new_arr[i][j].replace(",", "")
+            
+    ##address of the output
+    #address2 = "C://Users/fomiu/Desktop/учёба/data_for_project/marketdata_sample_good.xls"
+    #write_book(new_arr, address2, "marketdata_sample")
+
+
+
+if __name__ == "__main__": main()
