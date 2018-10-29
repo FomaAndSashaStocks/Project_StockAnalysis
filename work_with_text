@@ -1,0 +1,102 @@
+from instream import InStream
+from outstream import OutStream
+
+
+
+def find_word(String, pat):
+    i = 0
+    while(i < len(String)):
+        if((String[i] == pat[0]) or (String[i] == pat[0].upper())):
+            j = 1
+            while ((j < len(pat)) and (i + j < len(String)) and (String[i + j] == pat[j])):
+                j += 1
+            if (j == len(pat)): return True
+            i = i + j
+        else:
+            i += 1
+    return False
+
+
+#can be used either with string or with list "pat"
+def count_word(String, pat):
+    i = 0
+    counter = 0
+
+    if(str(type(pat)) == "<class 'str'>"):
+        while (i < len(String)):
+            if ((String[i] == pat[0]) or (String[i] == pat[0].upper())):
+                j = 1
+                while ((j < len(pat)) and (i + j < len(String)) and (String[i + j] == pat[j])):
+                    j += 1
+                if (j == len(pat)): counter += 1
+            i += 1
+
+    if(str(type(pat)) == "<class 'list'>"):
+        while (i < len(String)):
+            for k in range(0, len(pat)):
+                if ((String[i] == pat[k][0]) or (String[i] == pat[k][0].upper())):
+                    j = 1
+                    while ((j < len(pat[k])) and (i + j < len(String)) and (String[i + j] == pat[k][j])):
+                        j += 1
+                    if (j == len(pat[k])): counter += 1
+            i += 1
+    return counter
+
+
+
+#String - considered text
+#word - considered word
+#Vvec_pos - an array of "action words" with positive connotation
+#Vvec_neg - an array of "action words" with negative connotation
+def define_connotation(String, word, Vvec_pos, Vvec_neg):
+    sentences = String.split(".")
+
+    if(str(type(word)) == "<class 'str'>"):
+        pos = 0
+        neg = 0
+        for i in range(0, len(sentences)):
+            if(find_word(sentences[i], word) == True):
+                for j in range(0, len(Vvec_pos)):
+                    if(find_word(sentences[i], Vvec_pos[j]) == True):
+                        pos += 1
+                for j in range(0, len(Vvec_neg)):
+                    if(find_word(sentences[i], Vvec_neg[j]) == True):
+                        neg += 1
+        return [pos, neg]
+
+    if(str(type(word)) == "<class 'list'>"):
+        pos = [0]*len(word)
+        neg = [0]*len(word)
+        for i in range(0, len(sentences)):
+            for k in range(0, len(word)):
+                if (find_word(sentences[i], word[k]) == True):
+                    for j in range(0, len(Vvec_pos)):
+                        if (find_word(sentences[i], Vvec_pos[j]) == True):
+                            pos[k] += 1
+                    for j in range(0, len(Vvec_neg)):
+                        if (find_word(sentences[i], Vvec_neg[j]) == True):
+                            neg[k] += 1
+        return [pos, neg]
+
+
+def main():
+    s = "Apple's stocks are bad. But in general stocks are good. Stocks. Good stocks"
+    temp = define_connotation(s, "stock", ["good"], ["bad"])
+    print("good: ", temp[0], "\n", "bad", temp[1])
+
+
+    out = OutStream("C:/Users/ENVY m6/Desktop/output.txt")
+    Big_string = InStream("C:/Users/ENVY m6/Desktop/input.txt")
+    s = Big_string.readAll()
+    count = count_word(s, ["stock", "share"])
+    print("stock is mentioned " + str(count) + " times")
+
+    #pat = "stock"
+    #if(str(type(pat)) == "<class 'str'>"):
+    #    print(__count_str(s, pat))
+
+
+    out.write("stock is mentioned " + str(count) + " times")
+
+
+if __name__ == "__main__": main()
