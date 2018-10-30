@@ -186,12 +186,21 @@ def candle_graph(a):
     stddraw.show()
 
 
+def reader():
+    csv_path = "BTC.csv"
+    a = []
+    with open(csv_path) as file:
+        reader = csv.reader(file)
+        for row in reader:
+            a += [float(row[2])]
+    return a
+
 
 def main():
-    n = int(input("Enter the lenght "))
-    a = rand_gen(n)
+    a = reader()
+    n = len(a)
     for i in range(0, n):
-        print(a[i], end=' ')
+        print(a[i]),
     print('\n')
 
     print('difference: ' + str(dif_average(a)))
@@ -202,7 +211,10 @@ def main():
     temp = extremal_values_BEST(a)
     print("extremal points:")
     for i in range(0, len(temp)):
-        print('(' + str(temp[i][0] + 1) + ': ' + str(a[temp[i][0]]) + '  ' + str(temp[i][1]) + ')', end='   ')
+        print('(' + str(temp[i][0] + 1) + ': ' + str(a[temp[i][0]]) + '  ' + str(temp[i][1]) + ')'),
+    for i in range(len(a)):
+        a[i] = int(a[i])
     candle_graph(a)
+
 
 if __name__ == '__main__': main()
